@@ -70,38 +70,38 @@ namespace TicTacToe
         //* TODO:  finish all of these that return true
         private bool IsAnyRowWinner()
         {
-            for (int i = 0; i < SIZE; i++)
+            for (int i = 0; i < SIZE; i++) // Call IsRowWinner to test each individual row
                 if (IsRowWinner(i))
-                    return true;
+                    return true;           // Return true as soon as one of them are
             return false;
         }
 
         private bool IsColumnWinner(int col)
         {
-            Label square = GetSquare(0, col);
-            string symbol = square.Text;
-            for (int row = 1; row < SIZE; row++)
+            Label square = GetSquare(0, col);       // Start at the top for any given column
+            string symbol = square.Text;            // Create a string, give it the value at the same location
+            for (int row = 1; row < SIZE; row++)    // Return false as soon as we find a square that is either empty, or has the wrong symbol
             {
                 square = GetSquare(row, col);
                 if (symbol == EMPTY || square.Text != symbol)
                     return false;
             }
-            return true;
+            return true;                            // Otherwise, return true
         }
 
         private bool IsAnyColumnWinner()
         {
-            for (int i = 0; i < SIZE; i++)
+            for (int i = 0; i < SIZE; i++) // Call IsColumnWinner to test each individual column
                 if (IsColumnWinner(i))
-                    return true;
+                    return true;           // Return true as soon as one of them are
             return false;
         }
 
-        private bool IsDiagonal1Winner()
+        private bool IsDiagonal1Winner()            // Test the top left to top right diagonal
         {
-            Label square = GetSquare(0, 0);
-            string symbol = square.Text;
-            for (int i = 1; i < SIZE; i++)
+            Label square = GetSquare(0, 0);         // Start at the top left box
+            string symbol = square.Text;            // Get the symbol from that location
+            for (int i = 1; i < SIZE; i++)          // Go diagonally to the bottom right, return false as soon as we find an empty square or a square with a different symbol
             {
                 square = GetSquare(i, i);
                 if (symbol == EMPTY || square.Text != symbol)
@@ -125,18 +125,18 @@ namespace TicTacToe
 
         private bool IsAnyDiagonalWinner()
         {
-            return IsDiagonal1Winner() || IsDiagonal2Winner();
+            return IsDiagonal1Winner() || IsDiagonal2Winner();  // Test both diagonals, return true if either of them return true
         }
 
         private bool IsFull()
         {
             Label square;
-            for (int col = 0; col < SIZE; col++)
+            for (int col = 0; col < SIZE; col++)            // Look at each square from each row and column
                 for (int row = 0; row < SIZE; row++)
                 {
-                    square = GetSquare(row, col);
+                    square = GetSquare(row, col);           // Set the location to the next square to test
                     if (square.Text == EMPTY)
-                        return false;
+                        return false;                       // Return false if any of them are empty
                 }
             return true;
         }
@@ -264,6 +264,7 @@ namespace TicTacToe
                     resultLabel.Text = (player + " wins!");
                     break;
             }
+            DisableAllSquares();
         }
 
         //* TODO:  finish these 2
@@ -283,15 +284,28 @@ namespace TicTacToe
             Random rnd = new Random();
             int row = rnd.Next(0, SIZE);
             int col = rnd.Next(0, SIZE);
-            Label square = GetSquare(row, col);
+            Label square = GetSquare(row, col); // Find a random square
 
-            while (square != EMPTY)
+            while (square.text != EMPTY)    // While the random square is occupied...
             {
-                row = rnd.Next(0, SIZE);
+                row = rnd.Next(0, SIZE);    // Rerandom the square
                 col = rnd.Next(0, SIZE);
                 square = GetSquare(row, col);
             }
-            
+
+            int dim, one, winner;
+            square.Text = COMPUTER_SYMBOL;
+            if (IsWinner(dim, one))
+            {
+                if (IsAnyRowWinner())
+                    winner = row;
+                if (IsAnyColumnWinner())
+                    winner = col;
+                if (IsAnyDiagonalWinner())
+                    winner = row;
+                HighlightWinner(dim, one, winner);
+            }
+            IsTie();
         }
 
         // Setting the enabled property changes the look and feel of the cell.
@@ -341,10 +355,13 @@ namespace TicTacToe
 
         private void newGameButton_Click(object sender, EventArgs e)
         {
+            ResetSquares();
+            EnableAllSquares();
         }
 
         private void exitButton_Click(object sender, EventArgs e)
         {
+            this.Close();
         }
     }
 }
