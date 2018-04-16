@@ -69,7 +69,7 @@ namespace Memory
         // TODO:  students should write this one
         private bool IsMatch(int index1, int index2)
         {
-            return GetCardSuit(index1) == GetCardSuit(index2) && GetCardValue(index1) == GetCardValue(index2);
+            return index2!= NOT_PICKED_YET && GetCardSuit(index1) == GetCardSuit(index2) && GetCardValue(index1) == GetCardValue(index2);
         }
 
         // This method fills each picture box with a filename
@@ -79,9 +79,9 @@ namespace Memory
             string[] suits = { "c", "d", "h", "s" };
             int i = 1;
 
-            for (int suit = 0; suit <= 3; suit++)
+            for (int suit = 0; suit < suits.Length; suit++)
             {
-                for (int value = 0; value <= 4; value++)
+                for (int value = 0; value < values.Length; value++)
                 {
                     SetCardFilename(i, "card" + values[value] + suits[suit] + ".jpg");
                     i++;
@@ -159,6 +159,7 @@ namespace Memory
         private void DisableCard(int i)
         {
             PictureBox card = GetCard(i);
+            card.Enabled = false;
         }
 
         private void DisableAllCards()
@@ -182,7 +183,7 @@ namespace Memory
         private void EnableAllVisibleCards()
         {
             for (int i = 1; i <= CARDS; i++)
-                if (GetCard(i))
+                if (GetCard(i).Visible == false)
                     EnableCard(i);
         }
 
@@ -208,26 +209,21 @@ namespace Memory
 
             if (firstCardNumber == NOT_PICKED_YET)
             {
-                firstCardNumber = ;
-                LoadCardBack(firstCardNumber);
+                firstCardNumber = cardNumber;
+                LoadCard(firstCardNumber);
                 DisableCard(firstCardNumber);
             }
             else
             {
-                secondCardNumber = ;
-                LoadCardBack(secondCardNumber);
+                secondCardNumber = cardNumber;
+                LoadCard(secondCardNumber);
                 DisableAllCards();
+
             }
 
             /* 
              * if the first card isn't picked yet
-             *      save the first card index
-             *      load the card
-             *      disable the card
              *  else (the user just picked the second card)
-             *      save the second card index
-             *      load the card
-             *      disable all of the cards
              *      start the flip timer
              *  end if
             */
@@ -252,6 +248,8 @@ namespace Memory
             }
             else
             {
+                LoadCardBack(firstCardNumber);
+                LoadCardBack(secondCardNumber);
 
                 firstCardNumber = NOT_PICKED_YET;
                 secondCardNumber = NOT_PICKED_YET;

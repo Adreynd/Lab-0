@@ -298,10 +298,10 @@ namespace TicTacToe
             if (IsWinner(out dim, out one))             // If there is a winner, highlight the winning squares
             {
                 HighlightWinner("The computer", dim, one);
-                DisableAllSquares
+                DisableAllSquares();
             }
             else if (IsTie())                           // Test if there is a tie...
-                DisableAllSquares();
+                resultLabel.Text = ("The player tied with the computer");
         }
 
         // Setting the enabled property changes the look and feel of the cell.
@@ -345,23 +345,23 @@ namespace TicTacToe
         {
             Label clickedLabel = (Label)sender;
 
-            if (clickedLabel.Text == EMPTY)
+            if (clickedLabel.Text == EMPTY)             // Test if the square the user clicked is empty
             {
                 int row = NONE, column = NONE;
-                GetRowAndColumn(clickedLabel, out row, out column);
+                GetRowAndColumn(clickedLabel, out row, out column); // Figure out where they clicked
             
-                clickedLabel.Text = USER_SYMBOL;
-                DisableSquare(clickedLabel);
+                clickedLabel.Text = USER_SYMBOL;        // Put the user's symbol there
+                DisableSquare(clickedLabel);            // Disable the spot
 
-                if (IsWinner(out row, out col))
+                if (IsWinner(out row, out column))      // If the player won...
                 {
-                    HighlightWinner("The Player", row, column);
-                    DisableAllSquares();
+                    HighlightWinner("The Player", row, column); // Highlight the row/column/diagonal where they won
+                    DisableAllSquares();                // Prevent them from clicking on a new square
                 }
-                else if (IsTie())
-                    MessageBox.Show("The player tied with the computer.");
+                else if (IsTie())                       // If its a tie, give them the tie message
+                    resultLabel.Text = ("The player tied with the computer");
                 else
-                    MakeComputerMove();
+                    MakeComputerMove();                 // If the player didn't win, and the game didn't end in a tie
             }
         }
 
