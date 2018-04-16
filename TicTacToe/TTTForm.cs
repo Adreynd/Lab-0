@@ -80,11 +80,11 @@ namespace TicTacToe
         {
             Label square = GetSquare(0, col);       // Start at the top for any given column
             string symbol = square.Text;            // Create a string, give it the value at the same location
-            for (int row = 1; row < SIZE; row++)    // Return false as soon as we find a square that is either empty, or has the wrong symbol
+            for (int row = 1; row < SIZE; row++)
             {
-                square = GetSquare(row, col);
+                square = GetSquare(row, col);   // Test a different square each loop
                 if (symbol == EMPTY || square.Text != symbol)
-                    return false;
+                    return false;               // Return false as soon as we find a square that is either empty, or has the wrong symbol
             }
             return true;                            // Otherwise, return true
         }
@@ -97,15 +97,15 @@ namespace TicTacToe
             return false;
         }
 
-        private bool IsDiagonal1Winner()            // Test the top left to top right diagonal
+        private bool IsDiagonal1Winner()
         {
             Label square = GetSquare(0, 0);         // Start at the top left box
             string symbol = square.Text;            // Get the symbol from that location
-            for (int i = 1; i < SIZE; i++)          // Go diagonally to the bottom right, return false as soon as we find an empty square or a square with a different symbol
+            for (int i = 1; i < SIZE; i++)          // Go diagonally to the bottom right
             {
-                square = GetSquare(i, i);
+                square = GetSquare(i, i);           // Test a different square each loop
                 if (symbol == EMPTY || square.Text != symbol)
-                    return false;
+                    return false;                   // Return false as soon as we find an empty square or a square with a different symbol
             }
             return true;
         }
@@ -228,21 +228,21 @@ namespace TicTacToe
         //* TODO:  finish these 2
         private void HighlightRow(int row)
         {
-            for (int col = 0; col < SIZE; col++)
+            for (int col = 0; col < SIZE; col++)        // Go through each square of a row
             {
-                Label square = GetSquare(row, col);
-                square.Enabled = true;
-                square.ForeColor = Color.Red;
+                Label square = GetSquare(row, col);     // Highlight a new square
+                square.Enabled = true;                  // Enable it
+                square.ForeColor = Color.Red;           // Change the square's color
             }
         }
 
         private void HighlightDiagonal1()
         {
-            for (int i = 0; i < SIZE; i++)
+            for (int i = 0; i < SIZE; i++)          // Go through each square
             {
-                Label square = GetSquare(i, i);
-                square.Enabled = true;
-                square.ForeColor = Color.Red;
+                Label square = GetSquare(i, i);     // Highlight a new square
+                square.Enabled = true;              // Enable it
+                square.ForeColor = Color.Red;       // Change the square's color
             }
         }
 
@@ -276,6 +276,7 @@ namespace TicTacToe
                 {
                     square = GetSquare(row, col);
                     square.Text = EMPTY;
+                    square.ForeColor = Color.Black;
                 }
         }
 
@@ -286,26 +287,18 @@ namespace TicTacToe
             int col = rnd.Next(0, SIZE);
             Label square = GetSquare(row, col); // Find a random square
 
-            while (square.text != EMPTY)    // While the random square is occupied...
+            while (square.Text != EMPTY)    // While the random square is occupied...
             {
                 row = rnd.Next(0, SIZE);    // Rerandom the square
                 col = rnd.Next(0, SIZE);
                 square = GetSquare(row, col);
             }
 
-            int dim, one, winner;
-            square.Text = COMPUTER_SYMBOL;
-            if (IsWinner(dim, one))
-            {
-                if (IsAnyRowWinner())
-                    winner = row;
-                if (IsAnyColumnWinner())
-                    winner = col;
-                if (IsAnyDiagonalWinner())
-                    winner = row;
-                HighlightWinner(dim, one, winner);
-            }
-            IsTie();
+            int dim, one;
+            square.Text = COMPUTER_SYMBOL;              // Give the square the computer's symbol
+            if (IsWinner(out dim, out one))             // If there is a winner, highlight the winning squares
+                HighlightWinner("The computer", dim, one);
+            IsTie();                                    // Test if there is a tie...
         }
 
         // Setting the enabled property changes the look and feel of the cell.
@@ -339,6 +332,7 @@ namespace TicTacToe
                 {
                     Label square = GetSquare(row, col);
                     square.Click += new System.EventHandler(this.label_Click);
+                    square.ForeColor = Color.Black;
                 }
             }
         }
