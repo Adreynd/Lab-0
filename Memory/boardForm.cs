@@ -170,6 +170,7 @@ namespace Memory
         private void EnableCard(int i)
         {
             PictureBox card = GetCard(i);
+            card.Enabled = true;
         }
 
         private void EnableAllCards()
@@ -215,7 +216,7 @@ namespace Memory
             {
                 secondCardNumber = ;
                 LoadCardBack(secondCardNumber);
-                DisableCard(secondCardNumber);
+                DisableAllCards();
             }
 
             /* 
@@ -259,7 +260,6 @@ namespace Memory
             }
             /*
              * stop the flip timer
-             * else
              */
         }
         #endregion

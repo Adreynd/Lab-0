@@ -264,7 +264,6 @@ namespace TicTacToe
                     resultLabel.Text = (player + " wins!");
                     break;
             }
-            DisableAllSquares();
         }
 
         //* TODO:  finish these 2
@@ -297,8 +296,12 @@ namespace TicTacToe
             int dim, one;
             square.Text = COMPUTER_SYMBOL;              // Give the square the computer's symbol
             if (IsWinner(out dim, out one))             // If there is a winner, highlight the winning squares
+            {
                 HighlightWinner("The computer", dim, one);
-            IsTie();                                    // Test if there is a tie...
+                DisableAllSquares
+            }
+            else if (IsTie())                           // Test if there is a tie...
+                DisableAllSquares();
         }
 
         // Setting the enabled property changes the look and feel of the cell.
@@ -340,11 +343,26 @@ namespace TicTacToe
         //* TODO:  finish the event handlers
         private void label_Click(object sender, EventArgs e)
         {
-            int winningDimension = NONE;
-            int winningValue = NONE;
-
             Label clickedLabel = (Label)sender;
 
+            if (clickedLabel.Text == EMPTY)
+            {
+                int row = NONE, column = NONE;
+                GetRowAndColumn(clickedLabel, out row, out column);
+            
+                clickedLabel.Text = USER_SYMBOL;
+                DisableSquare(clickedLabel);
+
+                if (IsWinner(out row, out col))
+                {
+                    HighlightWinner("The Player", row, column);
+                    DisableAllSquares();
+                }
+                else if (IsTie())
+                    MessageBox.Show("The player tied with the computer.");
+                else
+                    MakeComputerMove();
+            }
         }
 
         private void newGameButton_Click(object sender, EventArgs e)
