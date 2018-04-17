@@ -66,10 +66,9 @@ namespace Memory
             return GetCardFilename(index).Substring(5, 1);
         }
 
-        // TODO:  students should write this one
-        private bool IsMatch(int index1, int index2)
+        private bool IsMatch(int index1, int index2)        // Checks if the second card has been picked, and whether or not the value of card 1 matches card 2
         {
-            return index2!= NOT_PICKED_YET && GetCardSuit(index1) == GetCardSuit(index2) && GetCardValue(index1) == GetCardValue(index2);
+            return index2!= NOT_PICKED_YET && GetCardValue(index1) == GetCardValue(index2);
         }
 
         // This method fills each picture box with a filename
@@ -89,20 +88,19 @@ namespace Memory
             }
         }
 
-        // TODO:  students should write this one
-        private void ShuffleCards()
+        private void ShuffleCards()                     // Goes through every card index, and swaps the image with the image from a random index
         {
             Random rnd = new Random();
-            int index;
-            PictureBox card1;
-            PictureBox card2;
-            for (int i = 1; i <= CARDS; i++)
+            int index;                          // Will hold random index values
+            string filename;                    // Placeholder used to swap the images of two cards
+            for (int i = 1; i <= CARDS; i++)    // Go through every card index
             {
-                index = rnd.Next(1, CARDS + 1);
-                while (index == i)
+                index = rnd.Next(1, CARDS + 1);             // Randomize index to a valid index
+                while (index == i)                          // If the random index is equal to i, rerandomize it until it isn't
                     index = rnd.Next(1, CARDS + 1);
-                card1 = GetCard(i);
-                card2 = GetCard(index);
+                filename = GetCardFilename(i);              // Store the picture location for the card at index i
+                SetCardFilename(i, GetCardFilename(index));     // Give the card at index i, the picture from the random index
+                SetCardFilename(index, filename);               // Complete the swap, give the card at the random index, the picture that was at index i
             }
         }
 
@@ -183,7 +181,7 @@ namespace Memory
         private void EnableAllVisibleCards()
         {
             for (int i = 1; i <= CARDS; i++)
-                if (GetCard(i).Visible == false)
+                if (GetCard(i).Visible == true)
                     EnableCard(i);
         }
 
@@ -192,73 +190,59 @@ namespace Memory
         #region EventHandlers
         private void boardForm_Load(object sender, EventArgs e)
         {
-            FillCardFilenames();
-            ShuffleCards();
-            LoadAllCardBacks();
-            /* 
-             *      While you're testing you might want to load all of card faces
-             *      to make sure that the cards are loaded successfully and that
-             *      they're shuffled.  If you get all 2s, something is wrong.
-            */
+            FillCardFilenames();    // Fill the board with unique cards
+            ShuffleCards();         // Randomize the postion of those cards
+            LoadAllCardBacks();     // Flip all the cards over
         }
 
         private void card_Click(object sender, EventArgs e)
         {
-            PictureBox card = (PictureBox)sender;
-            int cardNumber = int.Parse(card.Name.Substring(4));
+            PictureBox card = (PictureBox)sender;       // Get the card at the location the user clicked...
+            int cardNumber = int.Parse(card.Name.Substring(4));     // Then the index derived from that card
 
-            if (firstCardNumber == NOT_PICKED_YET)
+            if (firstCardNumber == NOT_PICKED_YET)      // When the first card has been clicked, track its index, flip it over, and prevent it from being reclicked
             {
                 firstCardNumber = cardNumber;
                 LoadCard(firstCardNumber);
                 DisableCard(firstCardNumber);
             }
-            else
+            else                                        // When the second card has been clicked, track index, flip it, prevent it from being reclicked, start the timer
             {
                 secondCardNumber = cardNumber;
                 LoadCard(secondCardNumber);
                 DisableAllCards();
-
+                flipTimer.Start();
             }
-
-            /* 
-             * if the first card isn't picked yet
-             *  else (the user just picked the second card)
-             *      start the flip timer
-             *  end if
-            */
         }
 
         private void flipTimer_Tick(object sender, EventArgs e)
         {
+            flipTimer.Stop();
             if (IsMatch(firstCardNumber, secondCardNumber))
             {
                 matches++;
 
-                HideCard(firstCardNumber);
+                HideCard(firstCardNumber);      // Remove the visiblity of matched cards
                 HideCard(secondCardNumber);
 
-                firstCardNumber = NOT_PICKED_YET;
+                firstCardNumber = NOT_PICKED_YET;       // After getting a match, reset the variables tracking the indexs of picked cards
                 secondCardNumber = NOT_PICKED_YET;
 
                 if (matches == 10)
                     MessageBox.Show("You have matched every card.");
                 else
-                    EnableAllVisibleCards();
+                    EnableAllVisibleCards();            // Renable any cards that are visible so that they can be clicked
             }
             else
             {
-                LoadCardBack(firstCardNumber);
+                LoadCardBack(firstCardNumber);          // Upon failing to get a match, flip the cards back over
                 LoadCardBack(secondCardNumber);
 
-                firstCardNumber = NOT_PICKED_YET;
+                firstCardNumber = NOT_PICKED_YET;       // After flipping card back over, reset the variables tracking the indexs of picked cards
                 secondCardNumber = NOT_PICKED_YET;
 
-                EnableAllVisibleCards();
+                EnableAllVisibleCards();                // Renable any cards that are visible so that they can be clicked
             }
-            /*
-             * stop the flip timer
-             */
         }
         #endregion
     }
